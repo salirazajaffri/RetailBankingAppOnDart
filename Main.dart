@@ -32,7 +32,9 @@ List<Map<String, dynamic>> usersData = [
       "availableBalance": "1000",
       "accountType": "Current Account",
       "accountNumber": "03132269475",
-      "IBAN": "PK45SADA0000003132269475"
+      "IBAN": "PK45SAYL0000003132269475",
+      "bankImd": "001",
+      "bank": "Saylani",
     }
   },
   {
@@ -44,7 +46,23 @@ List<Map<String, dynamic>> usersData = [
       "availableBalance": "10000",
       "accountType": "Saving Account",
       "accountNumber": "03341317406",
-      "IBAN": "PK45SADA0000003341317406"
+      "IBAN": "PK45SAYL0000003341317406",
+      "bankImd": "001",
+      "bank": "Saylani",
+    }
+  },
+  {
+    "id": "003",
+    "username": "hashmi",
+    "password": "123",
+    "accountData": {
+      "accountName": "Hassan Ur Rehman Hashmi",
+      "availableBalance": "20000",
+      "accountType": "Asan Account",
+      "accountNumber": "03462546995",
+      "IBAN": "PK45SAYL0000003462546995",
+      "bankImd": "001",
+      "bank": "Saylani",
     }
   }
 ];
@@ -217,26 +235,66 @@ OneTimeTransfer() {
   String? OneTimeTransferInput = stdin.readLineSync();
 
   if (OneTimeTransferInput == "1") {
-    print(" ");
-    print("Enter Same Bank Account Number (14 digits):");
-    print(" ");
-    String? sameBankAccountNumber = stdin.readLineSync();
-    print(" ");
+    bool validSameBankAccNum = true;
+    bool Accfound = false;
+    while (validSameBankAccNum) {
+      print(" ");
+      print("Enter Same Bank Account Number (11 digits):");
+      print(" ");
+      String? sameBankAccountNumber = stdin.readLineSync();
+      print(" ");
 
-    if (sameBankAccountNumber != null) {
-      if (sameBankAccountNumber.length < 14 ||
-          sameBankAccountNumber.length > 15) {
+      if (sameBankAccountNumber != null) {
+
+        if (sameBankAccountNumber.length < 11 || sameBankAccountNumber.length > 11) {
+          
+          print(" ");
+          print("Invalid Account number");
+          print(" ");
+
+        } 
+        else if (sameBankAccountNumber == usersDataGlobal['accountData']['accountNumber']) {
+          print("Sender and Reciever can't be same");
+        } 
+        else {
+          // validSameBankAccNum = false;
+          // var fetchSearchData = usersData.where((element) => element['accountData']['accountNumber'] == sameBankAccountNumber);
+          for(int i = 0; i< usersData.length;i++){
+            if( sameBankAccountNumber == usersData[i]['accountData']['accountNumber']){
+              validSameBankAccNum = false;
+              Accfound = true;
+              transferMoney(usersData[i]);
+              break;
+            }
+          }
+          if(Accfound == false){
+            print("Account not found");
+          }
+        }
+      } else {
         print(" ");
-        print("Invalid Account number");
+        print("Empty Data not Allowed");
         print(" ");
       }
     }
-    else{
-      print(" ");
-        print("Please enter account number:");
-        print(" ");
-    }
-
   } else if (OneTimeTransferInput == "2") {
   } else if (OneTimeTransferInput == "0") {}
+}
+
+transferMoney(userInfo){
+
+print("=================== Payee Information ============================");
+  print("");
+  stdout.write("Name : ");
+  stdout.write(userInfo['accountData']['accountName']);
+
+  print("");
+  stdout.write("Account Number : ");
+  stdout.write(userInfo['accountData']['accountNumber']);
+
+  print("");
+  stdout.write("IBAN : ");
+  stdout.write(userInfo['accountData']['IBAN']);
+
+
 }
