@@ -29,7 +29,7 @@ List<Map<String, dynamic>> usersData = [
     "password": "123",
     "accountData": {
       "accountName": "Syed Ali Raza Jafri",
-      "availableBalance": "1000",
+      "availableBalance": 2000,
       "accountType": "Current Account",
       "accountNumber": "03132269475",
       "IBAN": "PK45SAYL0000003132269475",
@@ -43,7 +43,7 @@ List<Map<String, dynamic>> usersData = [
     "password": "bilal123",
     "accountData": {
       "accountName": "Bilal Rehman",
-      "availableBalance": "10000",
+      "availableBalance": 10000,
       "accountType": "Saving Account",
       "accountNumber": "03341317406",
       "IBAN": "PK45SAYL0000003341317406",
@@ -57,7 +57,7 @@ List<Map<String, dynamic>> usersData = [
     "password": "123",
     "accountData": {
       "accountName": "Hassan Ur Rehman Hashmi",
-      "availableBalance": "20000",
+      "availableBalance": 20000,
       "accountType": "Asan Account",
       "accountNumber": "03462546995",
       "IBAN": "PK45SAYL0000003462546995",
@@ -245,29 +245,27 @@ OneTimeTransfer() {
       print(" ");
 
       if (sameBankAccountNumber != null) {
-
-        if (sameBankAccountNumber.length < 11 || sameBankAccountNumber.length > 11) {
-          
+        if (sameBankAccountNumber.length < 11 ||
+            sameBankAccountNumber.length > 11) {
           print(" ");
           print("Invalid Account number");
           print(" ");
-
-        } 
-        else if (sameBankAccountNumber == usersDataGlobal['accountData']['accountNumber']) {
+        } else if (sameBankAccountNumber ==
+            usersDataGlobal['accountData']['accountNumber']) {
           print("Sender and Reciever can't be same");
-        } 
-        else {
+        } else {
           // validSameBankAccNum = false;
           // var fetchSearchData = usersData.where((element) => element['accountData']['accountNumber'] == sameBankAccountNumber);
-          for(int i = 0; i< usersData.length;i++){
-            if( sameBankAccountNumber == usersData[i]['accountData']['accountNumber']){
+          for (int i = 0; i < usersData.length; i++) {
+            if (sameBankAccountNumber ==
+                usersData[i]['accountData']['accountNumber']) {
               validSameBankAccNum = false;
               Accfound = true;
               transferMoney(usersData[i]);
               break;
             }
           }
-          if(Accfound == false){
+          if (Accfound == false) {
             print("Account not found");
           }
         }
@@ -281,9 +279,11 @@ OneTimeTransfer() {
   } else if (OneTimeTransferInput == "0") {}
 }
 
-transferMoney(userInfo){
+transferMoney(userInfo) {
+  bool validAmount = true;
+  int amount;
 
-print("=================== Payee Information ============================");
+  print("=================== Payee Information ============================");
   print("");
   stdout.write("Name : ");
   stdout.write(userInfo['accountData']['accountName']);
@@ -296,5 +296,44 @@ print("=================== Payee Information ============================");
   stdout.write("IBAN : ");
   stdout.write(userInfo['accountData']['IBAN']);
 
+  while (validAmount) {
+    print("");
+    print("");
+    print("");
+    print("Enter amount : ");
+    String OneTimeFTAmount = stdin.readLineSync()!;
+    if (isNumeric(OneTimeFTAmount)) {
+      amount = int.parse(OneTimeFTAmount);
+      if (amount > usersDataGlobal['accountData']['availableBalance']) {
+        print("");
+        print("Insufficient Balance ");
+      } else {
+        for (int i = 0; i < usersData.length; i++) {
+          if (usersData[i]['accountData']['accountNumber'] ==
+              usersDataGlobal['accountData']['accountNumber']) {
+            usersData[i]['accountData']['availableBalance'] =
+                usersData[i]['accountData']['availableBalance'] - amount;
+            userInfo['accountData']['availableBalance'] =
+                userInfo['accountData']['availableBalance'] + amount;
+            print("");
+            print(" ==== Amount Transfer Successfully ====");
+            print("");
+            print("");
+            validAmount = false;
+            showDashboard(usersData[i]);
+          }
+        }
+      }
+    } else {
+      print("");
+      print("Invalid Amount");
+    }
+  }
+}
 
+bool isNumeric(String s) {
+  if (s == null) {
+    return false;
+  }
+  return double.tryParse(s) != null;
 }
